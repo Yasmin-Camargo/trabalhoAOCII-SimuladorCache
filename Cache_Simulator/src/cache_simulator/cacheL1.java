@@ -16,7 +16,7 @@ public class cacheL1 {
     private final String subst;
     private int [][]cache_val, cache_tag;
     private int missCompulsorio, missConflito, missCapacidade, hit, acessos, blocosVazios;
-    private Queue[] fila;       //fila para politica de substituição FIFO e LRU
+    private Queue<Integer>[] fila;       //fila para politica de substituição FIFO e LRU
                                 //OBS.: A cache é endereçada à bytes e o endereço possui 32 bits por padrão
     
     //Construtor
@@ -42,7 +42,7 @@ public class cacheL1 {
         if(subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0){
             fila = new Queue[nsets];
             for (int i = 0; i < nsets; i++) {
-                fila[i] = new LinkedList();
+                fila[i] = new LinkedList<>();
             }
         }
     }

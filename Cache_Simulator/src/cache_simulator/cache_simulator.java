@@ -65,7 +65,8 @@ public class cache_simulator {
             while (arquivoLeitura.read(b) != -1) {                      //lê de 4 em 4 bytes o arquivo
                 //System.out.println(ByteBuffer.wrap(b).getInt()+" ");
                 cache1.alocaEnderecoCache(ByteBuffer.wrap(b).getInt()); //manda o número inteiro correspondente ao 4 bytes
-            }         
+            } 
+            arquivoLeitura.close();
         } catch (IOException e) {
             System.out.println("\nErro: ao manipular o arquivo");
         }
