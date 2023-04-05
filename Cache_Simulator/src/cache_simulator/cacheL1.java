@@ -4,16 +4,20 @@ import java.util.Queue;
 import java.util.Random;
 
 /**
- * @author Caroline e Yasmin
- */
+ @author Caroline Camargo e Yasmin Camargo
+ * --- Trabalho de Implementação de um Simulador de Caches ---
+ *  Disciplina Arquitetura e Organização de Computadores II
+ *  Prof. Marcelo Schiavon Porto
+ **/
+
 public class cacheL1 {
     //Atributos
     private final int nsets, bsize, assoc, size, nblocks, n_bits_offset, n_bits_indice, n_bits_tag, flagOut;
     private final String subst;
     private int [][]cache_val, cache_tag;
     private int missCompulsorio, missConflito, missCapacidade, hit, acessos, blocosVazios;
-    
-    private Queue[] fila;       //fila para politica de substituição FIFO
+    private Queue[] fila;       //fila para politica de substituição FIFO e LRU
+                                //OBS.: A cache é endereçada à bytes e o endereço possui 32 bits por padrão
     
     //Construtor
     public cacheL1(int nsets, int bsize, int assoc, String subst, int flagOut) {
@@ -26,7 +30,7 @@ public class cacheL1 {
         nblocks = this.nsets * this.assoc;  //quantidade de blocos
         size = nblocks * this.bsize;        //tamanho total da cache (em bytes) = quantidade de blocos x tamanho do bloco
         
-        blocosVazios = nblocks;
+        blocosVazios = nblocks;             //variável de controle para saber quantos blocos ainda não foram escritos na cache
         
         n_bits_offset = (int) ((Math.log(this.bsize)) / Math.log(2) + 1e-10); //Forma de calcular um logaritimo de base 2, devido à aritmética de ponto flutuante imprecisa é acrescentado 1e-10
         n_bits_indice = (int) (Math.log(this.nsets) / Math.log(2) + 1e-10);
@@ -35,7 +39,7 @@ public class cacheL1 {
         cache_val = new int[nsets][assoc];       //matriz que armazena o bit de validade
         cache_tag = new int[nsets][assoc];       //matriz que armazena a tag
         
-        if(subst.equals("F") || subst.equals("f") || subst.equals("L") || subst.equals("l")){
+        if(subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0){
             fila = new Queue[nsets];
             for (int i = 0; i < nsets; i++) {
                 fila[i] = new LinkedList();
@@ -103,18 +107,18 @@ public class cacheL1 {
     
     //Salva a ordem dos indices em uma estrutura de dados, caso esteja se implementando fifo ou lru
     private void addHistorico(int indice, int pos){
-        if (subst.equals("F") || subst.equals("f") || subst.equals("L") || subst.equals("l")) {       //fifo
-            fila[indice].add(pos);                          //salva a posição do elemento da fila
+        if (subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0) {      
+            fila[indice].add(pos); //salva a posição do elemento da fila
         } 
     }
     
     //determina qual dado sairá da cache (de acordo com a politica de substitução)
     private int politicaSubstituicao(int indice, int tag){
-        if (subst.equals("F") || subst.equals("f") || subst.equals("L") || subst.equals("l")) {       //fifo ou lru
-            int linhaRemovida = (int) fila[indice].remove();//indice do dado que está a mais tempo na cachce 
+        if (subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0) {       //fifo ou lru
+            int linhaRemovida = (int) fila[indice].remove(); //indice do dado que está a mais tempo na cachce 
             fila[indice].add(linhaRemovida);
             return linhaRemovida;
-        } else if(subst.equals("R") || subst.equals("r")){  //ramdom
+        } else if(subst.equals("R") || subst.equals("r")){ //ramdom
             Random random = new Random();
             int numSorteado = random.nextInt(assoc); //gera um numero aleatório (indice) entre 0 e o número de vias - 1
             return numSorteado;
@@ -125,21 +129,19 @@ public class cacheL1 {
         return -1;
     }
     
-    
-    //pega um dado que está no meio da fila e coloca no final dela
+    //pega um dado que está no meio da fila e coloca no final dela 
     private void atualizaAcesso(int indice, int idhit) {
-        if (subst.equals("L") || subst.equals("l")){
-            int novoacesso = -1;
-            int tamanho = fila[indice].size();
-            for (int i = 0; i < tamanho; i++) { //manda todo mundo para tras da fila, exceto o elemento que deu hit  
-                int linhaRemovida = (int) fila[indice].remove();//indice do dado que está a mais tempo na cache
+        if (subst.compareToIgnoreCase("l") == 0) { //utilizado para atualizar a prioridade de um dado para implementação lru
+            int novoacesso = -1, tamanho = fila[indice].size();
+            for (int i = 0; i < tamanho; i++) { //manda todo mundo para o fim da fila, exceto o elemento que deu hit  
+                int linhaRemovida = (int) fila[indice].remove(); //indice do dado que está a mais tempo na cache
                 if (linhaRemovida == idhit){
                     novoacesso = linhaRemovida;
                 } else {
                     fila[indice].add(linhaRemovida);
                 }
             }
-            fila[indice].add(novoacesso);       //adiciona o elemento que deu hit no fim da fila
+            fila[indice].add(novoacesso); //adiciona o elemento que deu hit no fim da fila
         }
     }
     
@@ -151,14 +153,13 @@ public class cacheL1 {
         return Math.round(num * 100.0)/100.0;
     }
    
-    
     @Override
     public String toString() {
         String saida;
         int totalMisses = missCapacidade + missCompulsorio + missConflito;
         
         if (flagOut == 1){  //formato padrão: Total de acessos, Taxa de hit, Taxa de miss, Taxa de miss compulsório, Taxa de miss de capacidade, Taxa de miss de conflito
-            saida = "\n\n" + acessos + 
+            saida = "" + acessos + 
                     ", " + arredondar(((float) hit/acessos)) + 
                     ", " + arredondar((float) totalMisses/acessos) + 
                     ", " + arredondar2((float) missCompulsorio/totalMisses) + 
@@ -166,9 +167,10 @@ public class cacheL1 {
                     ", " + arredondar2((float) missConflito/totalMisses);
             
         } else {            //formato livre
-            saida = "\n\n--------------- INFORMACOES MEMORIA CACHE ---------------";
-            saida += "\nTamanho: "  + size +"\t\t\t\t\t(em bytes)" +
-                     "\nNumero de conjuntos: " + nsets + 
+            saida = "\n------------------- INFORMACOES MEMORIA CACHE -------------------\n";
+            saida += "\nTamanho: "  + size +" bytes" +
+                     "\t\t\tNumero de conjuntos: " + nsets + 
+                     "\nQuantidade de blocos: " + nblocks + 
                      "\nGrau de associtividade: " + assoc ;
             if(assoc == 1) {
                 saida += " (mapeamento direto)";
@@ -177,18 +179,16 @@ public class cacheL1 {
             } else {
                 saida += " (mapeamento associativo por conjunto)";
             }
-            saida += "\nQuantidade de blocos: " + nblocks + 
-                     "\nBits indice: " + n_bits_indice + 
-                     "\nBits ofsset: " + n_bits_offset + "\nBits tag: " + n_bits_tag +
-                     "\n--------------- TAXA DE HITS E MISSES ---------------\n" +
-                     "\nAcessos:" + acessos +"\nHit:" + arredondar((float) hit/acessos) + 
-                     "\nMisses: "+ arredondar((float)(totalMisses)/acessos) + 
-                     "\nMiss compulsorio: " + arredondar((float) missCompulsorio/totalMisses) + 
-                     "\nMiss de conflito: "+ arredondar((float) missConflito/totalMisses) + 
-                     "\nMiss de capacidade: " + arredondar((float) missCapacidade/totalMisses)+ 
-                     "\nQuantidade de miss compulsório: "+ missCompulsorio + 
-                     "\nQuantidade de miss conflito: " + missConflito + 
-                     "\nQuantidade de miss capacidade: " + missCapacidade;
+            saida += 
+                     "\n\nBits indice:\t" + n_bits_indice + 
+                     "\nBits ofsset:\t" + n_bits_offset + "\nBits tag: \t" + n_bits_tag +
+                     "\n\n--------------------- TAXA DE HITS E MISSES ---------------------\n" +
+                     "\nAcessos: \t" + acessos + "   (100%)" +
+                     "\nHit:\t\t" + arredondar((float) hit/acessos)*100 + "%" + 
+                     "\nMisses: \t"+ arredondar((float)(totalMisses)/acessos)*100 + "%" + 
+                     "\n\nMiss compulsorio: \t" + missCompulsorio + "\t(" + arredondar2((float) missCompulsorio/totalMisses)*100 + "%)"+ 
+                     "\nMiss de conflito: \t"+ missConflito + "\t(" +arredondar2((float) missConflito/totalMisses)*100 + "%)" + 
+                     "\nMiss de capacidade: \t" + missCapacidade + "\t(" + arredondar2((float) missCapacidade/totalMisses)*100 + "%)\n" ;
         }
         return saida;
     }

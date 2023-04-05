@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * @author Caroline e Yasmin
- */
+ * @author Caroline Camargo e Yasmin Camargo
+ * --- Trabalho de Implementação de um Simulador de Caches ---
+ *  Disciplina Arquitetura e Organização de Computadores II
+ *  Prof. Marcelo Schiavon Porto
+ **/
 
 public class cache_simulator {
     public static void main(String[] args) {
@@ -20,12 +23,12 @@ public class cache_simulator {
             System.out.println("java cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada");
             System.exit(1);*/
             
-            nsets = 1;    //número de conjuntos na cache
-            bsize = 4;      //tamanho do bloco
-            assoc = 32;      //grau de associatividade
+            nsets = 2;    //número de conjuntos na cache
+            bsize = 1;      //tamanho do bloco
+            assoc = 8;      //grau de associatividade
             subst = "l";    //política de substituição
-            flagOut = 1;
-            arquivoEntrada = "C:\\Users\\carol\\Documents\\NetBeansProjects\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\vortex.in.sem.persons.bin";
+            flagOut = 0;
+            arquivoEntrada = "C:\\Users\\carol\\Documents\\NetBeansProjects\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\bin_100.bin";
             
         } else {
             nsets = Integer.parseInt(args[0]);
@@ -36,19 +39,14 @@ public class cache_simulator {
             arquivoEntrada = args[5];
         }
         
-        System.out.printf("nsets = %d\n", nsets);
-        System.out.printf("bsize = %d\n", bsize);
-        System.out.printf("assoc = %d\n", assoc);
-        System.out.printf("subst = %s\n", subst);
-        System.out.printf("flagOut = %d\n", flagOut);
-        System.out.printf("arquivo = %s\n", arquivoEntrada);
-        
+        //cria a cache com as configurações escolhidas 
         cacheL1 cache1 = new cacheL1(nsets, bsize, assoc, subst, flagOut);
         
         //Abre o arquivo
         File arquivo = new File(arquivoEntrada);
         if (!arquivo.exists()) {
             System.out.println("\nErro: falha ao abrir o arquivo");
+            System.exit(1);
         }
                 
         try {
@@ -62,7 +60,9 @@ public class cache_simulator {
             System.out.println(cache1); 
             
         } catch (IOException e) {
-            System.out.println("\nErro: ao manipular o arquivo");
+            System.out.println("\nErro: ao ler o arquivo");
+        } catch (Exception e) {
+            System.out.println("\nErro: falha no enderecamento");
         }
     }
 }
