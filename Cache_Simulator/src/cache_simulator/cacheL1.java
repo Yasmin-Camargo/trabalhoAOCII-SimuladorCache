@@ -108,19 +108,19 @@ public class cacheL1 {
     //Salva a ordem dos indices em uma estrutura de dados, caso esteja se implementando fifo ou lru
     private void addHistorico(int indice, int pos){
         if (subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0) {      
-            fila[indice].add(pos); //salva a posição do elemento da fila
+            fila[indice].add(pos);                              //salva a posição do elemento da fila
         } 
     }
     
     //determina qual dado sairá da cache (de acordo com a politica de substitução)
     private int politicaSubstituicao(int indice, int tag){
-        if (subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0) {       //fifo ou lru
-            int linhaRemovida = (int) fila[indice].remove(); //indice do dado que está a mais tempo na cachce 
+        if (subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0) { //fifo ou lru
+            int linhaRemovida = (int) fila[indice].remove();    //indice do dado que está a mais tempo na cachce 
             fila[indice].add(linhaRemovida);
             return linhaRemovida;
-        } else if(subst.equals("R") || subst.equals("r")){ //ramdom
+        } else if(subst.equals("R") || subst.equals("r")){      //ramdom
             Random random = new Random();
-            int numSorteado = random.nextInt(assoc); //gera um numero aleatório (indice) entre 0 e o número de vias - 1
+            int numSorteado = random.nextInt(assoc);            //gera um numero aleatório (indice) entre 0 e o número de vias - 1
             return numSorteado;
         } else {
             System.out.println("Erro: Politica de substituicao invalida");
@@ -131,9 +131,9 @@ public class cacheL1 {
     
     //pega um dado que está no meio da fila e coloca no final dela 
     private void atualizaAcesso(int indice, int idhit) {
-        if (subst.compareToIgnoreCase("l") == 0) { //utilizado para atualizar a prioridade de um dado para implementação lru
+        if (subst.compareToIgnoreCase("l") == 0) {              //utilizado para atualizar a prioridade de um dado para implementação lru
             int novoacesso = -1, tamanho = fila[indice].size();
-            for (int i = 0; i < tamanho; i++) { //manda todo mundo para o fim da fila, exceto o elemento que deu hit  
+            for (int i = 0; i < tamanho; i++) {                 //manda todo mundo para o fim da fila, exceto o elemento que deu hit  
                 int linhaRemovida = (int) fila[indice].remove(); //indice do dado que está a mais tempo na cache
                 if (linhaRemovida == idhit){
                     novoacesso = linhaRemovida;
@@ -141,7 +141,7 @@ public class cacheL1 {
                     fila[indice].add(linhaRemovida);
                 }
             }
-            fila[indice].add(novoacesso); //adiciona o elemento que deu hit no fim da fila
+            fila[indice].add(novoacesso);                       //adiciona o elemento que deu hit no fim da fila
         }
     }
     
