@@ -5,20 +5,20 @@
 package cache_simulator;
 
 /**
- *
- * @author yasmi
- */
+ @author Caroline Camargo e Yasmin Camargo
+ * --- Trabalho de Implementação de um Simulador de Caches ---
+ *  Disciplina Arquitetura e Organização de Computadores II
+ *  Prof. Marcelo Schiavon Porto
+ **/
+
 public class frameCache extends javax.swing.JFrame {
 
-    /**
-     * Creates new form frameCache
-     */
     public frameCache() {
         initComponents();
     }
     
     public void inicializaComponentes(int nsets, int bsize, int assoc, String subst, int flagOut, String arquivoEntrada){
-        nsetsC.setValue(nsets);
+        nsetsC.setValue(nsets); //coloca valores calculados para interface gráfica
         bsizeC.setValue(bsize);
         assocC.setValue(assoc);
         arquivoEntradaC.setText(arquivoEntrada);
@@ -119,7 +119,7 @@ public class frameCache extends javax.swing.JFrame {
         log.setRows(5);
         jScrollPane1.setViewportView(log);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 40, 580, 430));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 40, 570, 430));
 
         jLabel7.setFont(new java.awt.Font("Microsoft YaHei", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 51, 0));
@@ -141,7 +141,7 @@ public class frameCache extends javax.swing.JFrame {
         assocC.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         jPanel1.add(assocC, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, 150, 30));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1030, 490));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1020, 490));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -151,7 +151,23 @@ public class frameCache extends javax.swing.JFrame {
     }//GEN-LAST:event_substCActionPerformed
 
     private void startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startActionPerformed
-        // TODO add your handling code here:
+        // extrai dados e executa simulação na cache
+        int nsets, bsize, assoc;
+        String arquivoEntrada, subst;
+        
+        nsets = (int) nsetsC.getValue();
+        bsize = (int) bsizeC.getValue();
+        assoc = (int) assocC.getValue();
+        arquivoEntrada = arquivoEntradaC.getText();
+        if (substC.getSelectedIndex() == 0) {       
+            subst = "r";
+        } else if(substC.getSelectedIndex() == 1){ 
+            subst = "f";
+        } else{
+            subst = "l";
+        }
+       
+        atualizaLog(cache_simulator.execucao(nsets, bsize, assoc, subst, 0, arquivoEntrada));
     }//GEN-LAST:event_startActionPerformed
 
     private void arquivoEntradaCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_arquivoEntradaCActionPerformed

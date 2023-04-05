@@ -17,8 +17,7 @@ public class cache_simulator {
         int nsets, bsize, assoc, flagOut;
         String arquivoEntrada, subst;
         
-        frameCache frame = new frameCache();
-        frame.setVisible(true);
+        frameCache frame = new frameCache(); //interface gráfica
         
         if (args.length != 6) {
             /*System.out.println(args.length);
@@ -42,10 +41,16 @@ public class cache_simulator {
             arquivoEntrada = args[5];
         }
         
-        execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada, frame);
-        frame.inicializaComponentes(nsets, bsize, assoc, subst, flagOut, arquivoEntrada);
+        if (flagOut == 1){  //execução pelo terminal
+            System.out.println( execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada));
+        } else{ //execução pela interface gráfica
+            frame.inicializaComponentes(nsets, bsize, assoc, subst, flagOut, arquivoEntrada);
+            frame.atualizaLog(execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada));
+            frame.setVisible(true);
+        }        
     }
-    public static void execucao(int nsets, int bsize, int assoc, String subst, int flagOut, String arquivoEntrada, frameCache frame){
+    
+    public static String execucao(int nsets, int bsize, int assoc, String subst, int flagOut, String arquivoEntrada){
         cacheL1 cache1 = new cacheL1(nsets, bsize, assoc, subst, flagOut);
         
         //Abre o arquivo
@@ -60,13 +65,10 @@ public class cache_simulator {
             while (arquivoLeitura.read(b) != -1) {                      //lê de 4 em 4 bytes o arquivo
                 //System.out.println(ByteBuffer.wrap(b).getInt()+" ");
                 cache1.alocaEnderecoCache(ByteBuffer.wrap(b).getInt()); //manda o número inteiro correspondente ao 4 bytes
-            }
-            
-            System.out.println(cache1); 
-            frame.atualizaLog(cache1.toString());
-            
+            }         
         } catch (IOException e) {
             System.out.println("\nErro: ao manipular o arquivo");
         }
+         return(cache1.toString());
     }
 }
