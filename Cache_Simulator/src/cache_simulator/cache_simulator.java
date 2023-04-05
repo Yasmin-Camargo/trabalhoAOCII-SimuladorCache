@@ -17,6 +17,9 @@ public class cache_simulator {
         int nsets, bsize, assoc, flagOut;
         String arquivoEntrada, subst;
         
+        frameCache frame = new frameCache();
+        frame.setVisible(true);
+        
         if (args.length != 6) {
             /*System.out.println(args.length);
             System.out.println("Numero de argumentos incorreto. Utilize:");
@@ -28,7 +31,7 @@ public class cache_simulator {
             assoc = 8;      //grau de associatividade
             subst = "l";    //política de substituição
             flagOut = 0;
-            arquivoEntrada = "C:\\Users\\carol\\Documents\\NetBeansProjects\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\bin_100.bin";
+            arquivoEntrada = "..\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\bin_100.bin";
             
         } else {
             nsets = Integer.parseInt(args[0]);
@@ -39,14 +42,16 @@ public class cache_simulator {
             arquivoEntrada = args[5];
         }
         
-        //cria a cache com as configurações escolhidas 
+        execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada, frame);
+        frame.inicializaComponentes(nsets, bsize, assoc, subst, flagOut, arquivoEntrada);
+    }
+    public static void execucao(int nsets, int bsize, int assoc, String subst, int flagOut, String arquivoEntrada, frameCache frame){
         cacheL1 cache1 = new cacheL1(nsets, bsize, assoc, subst, flagOut);
         
         //Abre o arquivo
         File arquivo = new File(arquivoEntrada);
         if (!arquivo.exists()) {
             System.out.println("\nErro: falha ao abrir o arquivo");
-            System.exit(1);
         }
                 
         try {
@@ -58,11 +63,10 @@ public class cache_simulator {
             }
             
             System.out.println(cache1); 
+            frame.atualizaLog(cache1.toString());
             
         } catch (IOException e) {
-            System.out.println("\nErro: ao ler o arquivo");
-        } catch (Exception e) {
-            System.out.println("\nErro: falha no enderecamento");
+            System.out.println("\nErro: ao manipular o arquivo");
         }
     }
 }

@@ -167,11 +167,11 @@ public class cacheL1 {
                     ", " + arredondar2((float) missConflito/totalMisses);
             
         } else {            //formato livre
-            saida = "\n------------------- INFORMACOES MEMORIA CACHE -------------------\n";
-            saida += "\nTamanho: "  + size +" bytes" +
+            saida = "\n   ------------------- INFORMACOES MEMORIA CACHE -------------------\n";
+            saida += "\n   Tamanho: "  + size +" bytes" +
                      "\t\t\tNumero de conjuntos: " + nsets + 
-                     "\nQuantidade de blocos: " + nblocks + 
-                     "\nGrau de associtividade: " + assoc ;
+                     "\n   Quantidade de blocos: " + nblocks + 
+                     "\n   Grau de associtividade: " + assoc ;
             if(assoc == 1) {
                 saida += " (mapeamento direto)";
             } else if(nsets == 1){
@@ -180,15 +180,15 @@ public class cacheL1 {
                 saida += " (mapeamento associativo por conjunto)";
             }
             saida += 
-                     "\n\nBits indice:\t" + n_bits_indice + 
-                     "\nBits ofsset:\t" + n_bits_offset + "\nBits tag: \t" + n_bits_tag +
-                     "\n\n--------------------- TAXA DE HITS E MISSES ---------------------\n" +
-                     "\nAcessos: \t" + acessos + "   (100%)" +
-                     "\nHit:\t\t" + arredondar((float) hit/acessos)*100 + "%" + 
-                     "\nMisses: \t"+ arredondar((float)(totalMisses)/acessos)*100 + "%" + 
-                     "\n\nMiss compulsorio: \t" + missCompulsorio + "\t(" + arredondar2((float) missCompulsorio/totalMisses)*100 + "%)"+ 
-                     "\nMiss de conflito: \t"+ missConflito + "\t(" +arredondar2((float) missConflito/totalMisses)*100 + "%)" + 
-                     "\nMiss de capacidade: \t" + missCapacidade + "\t(" + arredondar2((float) missCapacidade/totalMisses)*100 + "%)\n" ;
+                     "\n\n   Bits indice:\t" + n_bits_indice + 
+                     "\n   Bits ofsset:\t" + n_bits_offset + "\n   Bits tag: \t" + n_bits_tag +
+                     "\n\n   --------------------- TAXA DE HITS E MISSES ---------------------\n" +
+                     "\n   Acessos: \t" + acessos + "   (100%)" +
+                     "\n   Hit:\t\t" + arredondar((float) hit/acessos)*100 + "%" + 
+                     "\n   Misses: \t"+ arredondar((float)(totalMisses)/acessos)*100 + "%" + 
+                     "\n\n   Miss compulsorio: \t" + missCompulsorio + "\t(" + arredondar2((float) missCompulsorio/totalMisses)*100 + "%)"+ 
+                     "\n   Miss de conflito: \t"+ missConflito + "\t(" +arredondar2((float) missConflito/totalMisses)*100 + "%)" + 
+                     "\n   Miss de capacidade: \t" + missCapacidade + "\t(" + arredondar2((float) missCapacidade/totalMisses)*100 + "%)\n" ;
         }
         return saida;
     }
