@@ -1,6 +1,5 @@
 
 package cache_simulator;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,12 +20,12 @@ public class cache_simulator {
             System.out.println("java cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada");
             System.exit(1);*/
             
-            nsets = 2;    //número de conjuntos na cache
-            bsize = 1;      //tamanho do bloco
-            assoc = 8;      //grau de associatividade
-            subst = "L";    //política de substituição
+            nsets = 1;    //número de conjuntos na cache
+            bsize = 4;      //tamanho do bloco
+            assoc = 32;      //grau de associatividade
+            subst = "l";    //política de substituição
             flagOut = 1;
-            arquivoEntrada = "C:\\Users\\carol\\Documents\\NetBeansProjects\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\bin_100.bin";
+            arquivoEntrada = "C:\\Users\\carol\\Documents\\NetBeansProjects\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\vortex.in.sem.persons.bin";
             
         } else {
             nsets = Integer.parseInt(args[0]);
@@ -55,57 +54,15 @@ public class cache_simulator {
         try {
             FileInputStream arquivoLeitura = new FileInputStream(arquivo); 
             byte[] b = new byte[4];                                     //vetor que irá armazenar 4 bytes
-            
             while (arquivoLeitura.read(b) != -1) {                      //lê de 4 em 4 bytes o arquivo
                 //System.out.println(ByteBuffer.wrap(b).getInt()+" ");
                 cache1.alocaEnderecoCache(ByteBuffer.wrap(b).getInt()); //manda o número inteiro correspondente ao 4 bytes
             }
             
             System.out.println(cache1); 
-           
-            /* 4294967295;
             
-            cache1.alocaEnderecoCache(999999999);   //miss compulsório
-            cache1.alocaEnderecoCache(100);         //miss compulsório
-            cache1.alocaEnderecoCache(999999999);   //hit
-            cache1.alocaEnderecoCache(33333333);    //miss conflito
-            cache1.alocaEnderecoCache(100);         //hit
-            cache1.alocaEnderecoCache(999999999);   //hit
-            cache1.alocaEnderecoCache(509867000);   //miss conflito
-            cache1.alocaEnderecoCache(999999999);   //miss conflito
-            cache1.alocaEnderecoCache(999999999);   //hit
-            System.out.println(cache1); */
-            /*
-            
-            System.out.println(byteArquivo);
-                if (cont == 1){
-                    byte1 = byteArquivo;
-                } else if (cont == 2){
-                    byte2 = byteArquivo;
-                }else if (cont == 3){
-                    byte3 = byteArquivo;
-                }else if (cont == 4){
-                    byte4 = byteArquivo;
-                    cont = 0;
-                    cache1.alocaEnderecoCache(byte1, byte2, byte3,byte4);
-                }
-                cont++;
-            
-            String linha;
-            int num = arquivoLeitura.read();
-            
-            System.out.println(Integer.parseInt(arquivoLeitura.readLine(), 2));
-            
-            
-            while ((linha = arquivoLeitura.readLine()) != null) { //lê de linha em linha
-                System.out.println(linha);
-            }
-            arquivoLeitura.close();
-            */
         } catch (IOException e) {
             System.out.println("\nErro: ao manipular o arquivo");
         }
-
-        // Seu codigo vai aqui
     }
 }

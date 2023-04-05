@@ -1,5 +1,4 @@
 package cache_simulator;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -12,7 +11,7 @@ public class cacheL1 {
     private final int nsets, bsize, assoc, size, nblocks, n_bits_offset, n_bits_indice, n_bits_tag, flagOut;
     private final String subst;
     private int [][]cache_val, cache_tag;
-    private int missCompulsorio, missConflito, missCapacidade, hit, acessos;
+    private int missCompulsorio, missConflito, missCapacidade, hit, acessos, blocosVazios;
     
     private Queue[] fila;       //fila para politica de substituição FIFO
     
@@ -26,6 +25,8 @@ public class cacheL1 {
         
         nblocks = this.nsets * this.assoc;  //quantidade de blocos
         size = nblocks * this.bsize;        //tamanho total da cache (em bytes) = quantidade de blocos x tamanho do bloco
+        
+        blocosVazios = nblocks;
         
         n_bits_offset = (int) ((Math.log(this.bsize)) / Math.log(2) + 1e-10); //Forma de calcular um logaritimo de base 2, devido à aritmética de ponto flutuante imprecisa é acrescentado 1e-10
         n_bits_indice = (int) (Math.log(this.nsets) / Math.log(2) + 1e-10);
@@ -48,9 +49,7 @@ public class cacheL1 {
         acessos++;
         int tag = endereco >> (n_bits_offset + n_bits_indice);                               // bits que representam a tag 
         int indice = (endereco >> n_bits_offset) & ((int) Math.pow(2, n_bits_indice) - 1);   // bits que representam o índice  
-        if (indice > 0){ 
-            indice--;
-        }
+        
         //System.out.println("binario: "+endereco+" \ttag:"+tag + "\tindice" + indice);
         
         int posicaoLivre = -1, bitControle = -1;    // 1 -> endereço está na cache
@@ -60,8 +59,8 @@ public class cacheL1 {
         for (int i = 0; i < assoc; i++) {           //percorre as linhas/vias da cache para um determinado indice/conjunto
             if (cache_val[indice][i] == 0 && posicaoLivre == -1) { //caso a posição encontrada não tenha sido preenchida ainda
                 bitControle = 2;
-                posicaoLivre = i;
-            } else if (cache_tag[indice][i] == tag){ //caso o endereço requisitado esteja na cache   
+                posicaoLivre = i; 
+            } else if (cache_tag[indice][i] == tag && cache_val[indice][i] != 0 ){          //caso o endereço requisitado esteja na cache   
                 hit++;
                 bitControle = 1;
                 atualizaAcesso(indice, i);
@@ -69,40 +68,35 @@ public class cacheL1 {
             } 
         }
         
-        if (bitControle == 2) { //endereco não está na cache, mas tem linhas vagas
+        if (bitControle == 2) {                             //endereco não está na cache, mas tem linhas vagas
             missCompulsorio++;
+            blocosVazios--;
             cache_val[indice][posicaoLivre] = 1;
             cache_tag[indice][posicaoLivre] = tag;
-            addHistorico(indice, posicaoLivre); //adiciona em uma estrutura de dados, caso se tenha trabalhando com fifo ou lru
+            addHistorico(indice, posicaoLivre);             //adiciona em uma estrutura de dados, caso se tenha trabalhando com fifo ou lru
             
-        } else if(bitControle != 1){    //caso tenha ocorrido um miss de capacidade ou de conflito
-            if (assoc == 1) {           //mapeamento direto
+        } else if(bitControle != 1){                        //caso tenha ocorrido um miss de capacidade ou de conflito
+            if (verificaBlocosLivres()) {
                 missConflito++;
-                cache_val[indice][0] = 1;
-                cache_tag[indice][0] = tag;
-            } else if(nsets != 1){     //mapeamento conjunto associativo
-                if (verificaLinhasLivres()) {
-                    missConflito++;
-                } else {
-                    missCapacidade++;
-                }
-                politicaSubstituicao(indice, tag);
-                
-            } else {                    //mapeamento totalmente associativo
+            } else {
                 missCapacidade++;
-                politicaSubstituicao(indice, tag);
+            }
+            
+            if (assoc == 1) {                               //mapeamento direto
+                cache_tag[indice][0] = tag;
+                cache_val[indice][0] = 1;
+            } else {                                        //mapeamento conjunto associativo ou totalmente direto
+                int id = politicaSubstituicao(indice, tag);
+                cache_tag[indice][id] = tag;
+                cache_val[indice][id] = 1;
             }
         }
     }
     
     //Verifica se a cache já está totalmente preenchida
-    private boolean verificaLinhasLivres(){
-        for (int i = 0; i < nblocks; i++) {
-            for (int j = 0; j < assoc; j++) {
-                if (cache_val[i][j] == 0) {
-                    return true;
-                }
-            }
+    private boolean verificaBlocosLivres(){
+        if (blocosVazios > 0) {
+            return true;
         }
         return false;
     }
@@ -115,44 +109,37 @@ public class cacheL1 {
     }
     
     //determina qual dado sairá da cache (de acordo com a politica de substitução)
-    private void politicaSubstituicao(int indice, int tag){
+    private int politicaSubstituicao(int indice, int tag){
         if (subst.equals("F") || subst.equals("f") || subst.equals("L") || subst.equals("l")) {       //fifo ou lru
             int linhaRemovida = (int) fila[indice].remove();//indice do dado que está a mais tempo na cachce 
-            cache_tag[indice][linhaRemovida] = tag;
-            cache_val[indice][linhaRemovida] = 1;
             fila[indice].add(linhaRemovida);
-            
+            return linhaRemovida;
         } else if(subst.equals("R") || subst.equals("r")){  //ramdom
             Random random = new Random();
             int numSorteado = random.nextInt(assoc); //gera um numero aleatório (indice) entre 0 e o número de vias - 1
-            cache_tag[indice][numSorteado] = tag;
-            cache_val[indice][numSorteado] = 1;
-            
+            return numSorteado;
         } else {
-            System.err.println("Erro: Politica de substituicao invalida");
+            System.out.println("Erro: Politica de substituicao invalida");
             System.exit(1);
         }
+        return -1;
     }
     
+    
+    //pega um dado que está no meio da fila e coloca no final dela
     private void atualizaAcesso(int indice, int idhit) {
-        int novoacesso = -1;
         if (subst.equals("L") || subst.equals("l")){
-            if (!fila[indice].isEmpty()) {          //verifica se a fila contem algum elemento
-                int tamanho = fila[indice].size();
-                for (int i = 0; i < tamanho; i++) { //manda todo mundo para tras da fila, exceto o elemento que deu hit  
-                    int linhaRemovida = (int) fila[indice].remove();//indice do dado que está a mais tempo na cache
-                    if (linhaRemovida == idhit){
-                        novoacesso = linhaRemovida;
-                    } else {
-                        fila[indice].add(linhaRemovida);
-                    }
-                }
-                if (novoacesso == -1) {
-                    System.out.println("deu ruim");
+            int novoacesso = -1;
+            int tamanho = fila[indice].size();
+            for (int i = 0; i < tamanho; i++) { //manda todo mundo para tras da fila, exceto o elemento que deu hit  
+                int linhaRemovida = (int) fila[indice].remove();//indice do dado que está a mais tempo na cache
+                if (linhaRemovida == idhit){
+                    novoacesso = linhaRemovida;
                 } else {
-                    fila[indice].add(novoacesso);       //adiciona o elemento que deu hit no fim da fila
+                    fila[indice].add(linhaRemovida);
                 }
             }
+            fila[indice].add(novoacesso);       //adiciona o elemento que deu hit no fim da fila
         }
     }
     
@@ -198,7 +185,10 @@ public class cacheL1 {
                      "\nMisses: "+ arredondar((float)(totalMisses)/acessos) + 
                      "\nMiss compulsorio: " + arredondar((float) missCompulsorio/totalMisses) + 
                      "\nMiss de conflito: "+ arredondar((float) missConflito/totalMisses) + 
-                     "\nMiss de capacidade: " + arredondar((float) missCapacidade/totalMisses);
+                     "\nMiss de capacidade: " + arredondar((float) missCapacidade/totalMisses)+ 
+                     "\nQuantidade de miss compulsório: "+ missCompulsorio + 
+                     "\nQuantidade de miss conflito: " + missConflito + 
+                     "\nQuantidade de miss capacidade: " + missCapacidade;
         }
         return saida;
     }
