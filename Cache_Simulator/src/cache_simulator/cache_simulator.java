@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import javax.swing.JOptionPane;
 
 /**
  * @author Caroline Camargo e Yasmin Camargo
@@ -56,20 +57,25 @@ public class cache_simulator {
         //Abre o arquivo
         File arquivo = new File(arquivoEntrada);
         if (!arquivo.exists()) {
-            System.out.println("\nErro: falha ao abrir o arquivo");
+            if (flagOut == 0){
+                JOptionPane.showMessageDialog(null, "Erro: falha ao abrir o arquivo");
+            } else{
+                System.out.println("\nErro: falha ao abrir o arquivo");
+            }
+        } else{
+            try {
+                FileInputStream arquivoLeitura = new FileInputStream(arquivo);
+                byte[] b = new byte[4];                                     //vetor que irá armazenar 4 bytes
+                while (arquivoLeitura.read(b) != -1) {                      //lê de 4 em 4 bytes o arquivo
+                    //System.out.println(ByteBuffer.wrap(b).getInt()+" ");
+                    cache1.alocaEnderecoCache(ByteBuffer.wrap(b).getInt()); //manda o número inteiro correspondente ao 4 bytes
+                }
+                arquivoLeitura.close();
+            } catch (IOException e) {
+                System.out.println("\nErro: ao manipular o arquivo");
+            }
+            return(cache1.toString());
         }
-                
-        try {
-            FileInputStream arquivoLeitura = new FileInputStream(arquivo); 
-            byte[] b = new byte[4];                                     //vetor que irá armazenar 4 bytes
-            while (arquivoLeitura.read(b) != -1) {                      //lê de 4 em 4 bytes o arquivo
-                //System.out.println(ByteBuffer.wrap(b).getInt()+" ");
-                cache1.alocaEnderecoCache(ByteBuffer.wrap(b).getInt()); //manda o número inteiro correspondente ao 4 bytes
-            } 
-            arquivoLeitura.close();
-        } catch (IOException e) {
-            System.out.println("\nErro: ao manipular o arquivo");
-        }
-         return(cache1.toString());
+         return("");
     }
 }
