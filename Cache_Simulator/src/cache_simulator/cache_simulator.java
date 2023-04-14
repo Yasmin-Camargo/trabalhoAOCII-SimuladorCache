@@ -21,11 +21,6 @@ public class cache_simulator {
         frameCache frame = new frameCache(); //interface gráfica
         
         if (args.length != 6) {
-            /*System.out.println(args.length);
-            System.out.println("Numero de argumentos incorreto. Utilize:");
-            System.out.println("java cache_simulator <nsets> <bsize> <assoc> <substituição> <flag_saida> arquivo_de_entrada");
-            System.exit(1);*/
-            
             nsets = 2;    //número de conjuntos na cache
             bsize = 1;      //tamanho do bloco
             assoc = 8;      //grau de associatividade
@@ -44,11 +39,12 @@ public class cache_simulator {
         
         if (flagOut == 1){  //execução pelo terminal
             System.out.println( execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada));
+            System.exit(0);
         } else{ //execução pela interface gráfica
             frame.inicializaComponentes(nsets, bsize, assoc, subst, flagOut, arquivoEntrada);
             frame.atualizaLog(execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada));
             frame.setVisible(true);
-        }        
+        }  
     }
     
     public static String execucao(int nsets, int bsize, int assoc, String subst, int flagOut, String arquivoEntrada){

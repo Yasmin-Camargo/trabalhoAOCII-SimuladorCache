@@ -173,19 +173,19 @@ public class cacheL1 {
                      "\n   Quantidade de blocos: " + nblocks + 
                      "\n   Grau de associtividade: " + assoc ;
             if(assoc == 1) {
-                saida += " (mapeamento direto)";
+                saida += "\t(mapeamento direto)";
             } else if(nsets == 1){
-                saida += " (mapeamento totalmente associativo)";
+                saida += "\t(mapeamento totalmente associativo)";
             } else {
-                saida += " (mapeamento associativo por conjunto)";
+                saida += "\t(mapeamento associativo por conjunto)";
             }
             saida += 
                      "\n\n   Bits indice:\t" + n_bits_indice + 
                      "\n   Bits ofsset:\t" + n_bits_offset + "\n   Bits tag: \t" + n_bits_tag +
                      "\n\n   --------------------- TAXA DE HITS E MISSES ---------------------\n" +
-                     "\n   Acessos: \t" + acessos + "   (100%)" +
-                     "\n   Hit:\t\t" + arredondar((float) hit/acessos)*100 + "%" + 
-                     "\n   Misses: \t"+ arredondar((float)(totalMisses)/acessos)*100 + "%" + 
+                     "\n   Acessos: \t" + acessos + "\t(100%)" +
+                     "\n   Hit:\t" + hit +"\t("+ arredondar((float) hit/acessos)*100 + "%)" + 
+                     "\n   Misses: \t"+ totalMisses +"\t("+ arredondar((float)(totalMisses)/acessos)*100 + "%)" + 
                      "\n\n   Miss compulsorio: \t" + missCompulsorio + "\t(" + arredondar2((float) missCompulsorio/totalMisses)*100 + "%)"+ 
                      "\n   Miss de conflito: \t"+ missConflito + "\t(" +arredondar2((float) missConflito/totalMisses)*100 + "%)" + 
                      "\n   Miss de capacidade: \t" + missCapacidade + "\t(" + arredondar2((float) missCapacidade/totalMisses)*100 + "%)\n" ;

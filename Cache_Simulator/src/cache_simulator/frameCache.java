@@ -20,6 +20,7 @@ public class frameCache extends javax.swing.JFrame {
         initComponents();
  	setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.getContentPane().setBackground(Color.white);
     }
     
     public void inicializaComponentes(int nsets, int bsize, int assoc, String subst, int flagOut, String arquivoEntrada){
