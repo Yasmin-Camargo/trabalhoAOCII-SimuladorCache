@@ -159,10 +159,10 @@ public class cacheL1 {
         
         if (flagOut == 1){  //formato padrão: Total de acessos, Taxa de hit, Taxa de miss, Taxa de miss compulsório, Taxa de miss de capacidade, Taxa de miss de conflito
             saida = "" + acessos + 
-                    ", " + arredondar(((float) hit/acessos)) + 
-                    ", " + arredondar((float) totalMisses/acessos) + 
+                    ", " + arredondar(((float) hit/acessos))                + 
+                    ", " + arredondar((float) totalMisses/acessos)          + 
                     ", " + arredondar2((float) missCompulsorio/totalMisses) + 
-                    ", " + arredondar2((float) missCapacidade/totalMisses) + 
+                    ", " + arredondar2((float) missCapacidade/totalMisses)  + 
                     ", " + arredondar2((float) missConflito/totalMisses);
             
         } else {            //formato livre
@@ -187,8 +187,8 @@ public class cacheL1 {
                      "\n\n\n    --------------------------------- TAXA DE HITS E MISSES ---------------------------------\n" +
                      "\n    Acessos: \t"    + acessos       + "\t(100%)"    +
                      "\n    Hit:\t"         + hit           +"\t("          + arredondar((float) hit/acessos)*100 + "%)" + 
-                     "\n    Misses: \t"     + totalMisses   +"\t("          + arredondar((float)(totalMisses)/acessos)*100 + "%)" + 
-                     "\n\n    Miss compulsorio: \t"     +   missCompulsorio   + "\t(" + arredondar2((float) missCompulsorio/totalMisses)*100    + "%)"+ 
+                     "\n    Misses: \t"     + totalMisses   +"\t("          + arredondar((float)(totalMisses)/acessos)*100 + "%)\n" + 
+                     "\n    Miss compulsorio: \t"     +   missCompulsorio   + "\t(" +   arredondar2((float) missCompulsorio/totalMisses)*100    + "%)"+ 
                      "\n    Miss de conflito: \t"       +   missConflito      + "\t(" + arredondar2((float) missConflito/totalMisses)*100       + "%)" + 
                      "\n    Miss de capacidade: \t"     +   missCapacidade    + "\t(" + arredondar2((float) missCapacidade/totalMisses)*100     + "%)\n" ;
         }
