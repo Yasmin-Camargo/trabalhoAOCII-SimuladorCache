@@ -15,9 +15,11 @@ A configuração de cache deverá ser repassada por linha de comando com os segu
 - substituição: política de substituição, que pode ser Random (R), FIFO (F) ou L (LRU);
 - flag_saida: flag que ativa o modo padrão de saída de dados
     -  flag_saida = 1
+    ![image](https://user-images.githubusercontent.com/88253809/232159592-bffdaf4a-3024-4cad-8f02-8b220d58659f.png)
 
         O Formato padrão de saída, na seguinte ordem: Total de acessos, Taxa de hit, Taxa de miss, Taxa de miss compulsório, Taxa de miss de capacidade, Taxa de miss de conflito
     - flag_saida = 0
+    ![image](https://user-images.githubusercontent.com/88253809/232159855-93bed274-c44d-4edd-8771-eacc3a01a9cd.png)
 
         Configurações da cache podem ser realizadas por interface gráfica
 - arquivo_de_entrada: arquivo com os endereços para acesso à cache. Podem ser utilizados os seguintes arquivos:
