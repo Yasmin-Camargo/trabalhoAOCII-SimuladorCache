@@ -19,15 +19,16 @@ A configuração de cache deverá ser repassada por linha de comando com os segu
 
         O Formato padrão de saída, na seguinte ordem: Total de acessos, Taxa de hit, Taxa de miss, Taxa de miss compulsório, Taxa de miss de capacidade, Taxa de miss de conflito
     - flag_saida = 0
+
+    Configurações da cache podem ser realizadas por interface gráfica
     ![image](https://user-images.githubusercontent.com/88253809/232159855-93bed274-c44d-4edd-8771-eacc3a01a9cd.png)
 
-        Configurações da cache podem ser realizadas por interface gráfica
 - arquivo_de_entrada: arquivo com os endereços para acesso à cache. Podem ser utilizados os seguintes arquivos:
     - \Cache_Simulator\src\cache_simulator\Enderecos\bin_100.bin
     - \Cache_Simulator\src\cache_simulator\Enderecos\bin_10000.bin
     - \Cache_Simulator\src\cache_simulator\Enderecos\vortex.in.sem.persons.bin
 
 ## Exemplo de Compilação e execução por terminal
-    javac --source-path 'Cache_Simulator/src/' 'Cache_Simulator/src/cache_simulator/cache_simulator.java'
+    javac -d \Cache_Simulator\build\classes\cache_simulator --source-path 'Cache_Simulator/src/' 'Cache_Simulator/src/cache_simulator/cache_simulator.java'
 
-    java -cp Cache_Simulator/src/ cache_simulator/cache_simulator 128 4 1 R 1 .\Cache_Simulator\src\cache_simulator\Enderecos\bin_100.bin
+    java -cp \Cache_Simulator\build\classes\cache_simulator cache_simulator/cache_simulator 128 4 1 R 1 .\Cache_Simulator\src\cache_simulator\Enderecos\bin_100.bin

@@ -12,12 +12,14 @@ import java.util.Random;
 
 public class cacheL1 {
     //Atributos
-    private final int nsets, bsize, assoc, size, nblocks, n_bits_offset, n_bits_indice, n_bits_tag, flagOut;
+    private final int nsets, bsize, assoc, size, nblocks, flagOut;
+    private final int n_bits_offset, n_bits_indice, n_bits_tag;
     private final String subst;
+    private int missCompulsorio, missConflito, missCapacidade;
+    private int hit, acessos, blocosVazios;
     private int [][]cache_val, cache_tag;
-    private int missCompulsorio, missConflito, missCapacidade, hit, acessos, blocosVazios;
-    private Queue<Integer>[] fila;       //fila para politica de substituição FIFO e LRU
-                                //OBS.: A cache é endereçada à bytes e o endereço possui 32 bits por padrão
+    private Queue<Integer>[] fila;      //fila para politica de substituição FIFO e LRU
+                                        //OBS.: A cache é endereçada à bytes e o endereço possui 32 bits por padrão
     
     //Construtor
     public cacheL1(int nsets, int bsize, int assoc, String subst, int flagOut) {
@@ -99,10 +101,7 @@ public class cacheL1 {
     
     //Verifica se a cache já está totalmente preenchida
     private boolean verificaBlocosLivres(){
-        if (blocosVazios > 0) {
-            return true;
-        }
-        return false;
+        return (blocosVazios > 0);
     }
     
     //Salva a ordem dos indices em uma estrutura de dados, caso esteja se implementando fifo ou lru
@@ -167,28 +166,31 @@ public class cacheL1 {
                     ", " + arredondar2((float) missConflito/totalMisses);
             
         } else {            //formato livre
-            saida = "\n   ------------------- INFORMACOES MEMORIA CACHE -------------------\n";
-            saida += "\n   Tamanho: "  + size +" bytes" +
-                     "\t\t\tNumero de conjuntos: " + nsets + 
-                     "\n   Quantidade de blocos: " + nblocks + 
-                     "\n   Grau de associtividade: " + assoc ;
+            saida = "\n    --------------------------- INFORMACOES MEMORIA CACHE ---------------------------\n";
+            saida += "\n    Tamanho: "  + size +" bytes \t\t" +
+                     "\t    Numero de conjuntos: " + nsets + 
+                     "\n    Quantidade de blocos: " + nblocks + 
+                     "\n    Grau de associtividade: " + assoc ;
+            
             if(assoc == 1) {
-                saida += "\t(mapeamento direto)";
+                saida += "\t    (mapeamento direto)\n";
             } else if(nsets == 1){
-                saida += "\t(mapeamento totalmente associativo)";
+                saida += "\t    (mapeamento totalmente associativo)\n";
             } else {
-                saida += "\t(mapeamento associativo por conjunto)";
+                saida += "\t    (mapeamento associativo por conjunto)\n";
             }
+            
             saida += 
-                     "\n\n   Bits indice:\t" + n_bits_indice + 
-                     "\n   Bits ofsset:\t" + n_bits_offset + "\n   Bits tag: \t" + n_bits_tag +
-                     "\n\n   --------------------- TAXA DE HITS E MISSES ---------------------\n" +
-                     "\n   Acessos: \t" + acessos + "\t(100%)" +
-                     "\n   Hit:\t" + hit +"\t("+ arredondar((float) hit/acessos)*100 + "%)" + 
-                     "\n   Misses: \t"+ totalMisses +"\t("+ arredondar((float)(totalMisses)/acessos)*100 + "%)" + 
-                     "\n\n   Miss compulsorio: \t" + missCompulsorio + "\t(" + arredondar2((float) missCompulsorio/totalMisses)*100 + "%)"+ 
-                     "\n   Miss de conflito: \t"+ missConflito + "\t(" +arredondar2((float) missConflito/totalMisses)*100 + "%)" + 
-                     "\n   Miss de capacidade: \t" + missCapacidade + "\t(" + arredondar2((float) missCapacidade/totalMisses)*100 + "%)\n" ;
+                     "\n    Bits indice:\t"     + n_bits_indice + 
+                     "\n    Bits ofsset:\t"     + n_bits_offset + 
+                     "\n    Bits tag: \t\t"     + n_bits_tag    +
+                     "\n\n\n    --------------------------------- TAXA DE HITS E MISSES ---------------------------------\n" +
+                     "\n    Acessos: \t"    + acessos       + "\t(100%)"    +
+                     "\n    Hit:\t"         + hit           +"\t("          + arredondar((float) hit/acessos)*100 + "%)" + 
+                     "\n    Misses: \t"     + totalMisses   +"\t("          + arredondar((float)(totalMisses)/acessos)*100 + "%)" + 
+                     "\n\n    Miss compulsorio: \t"     +   missCompulsorio   + "\t(" + arredondar2((float) missCompulsorio/totalMisses)*100    + "%)"+ 
+                     "\n    Miss de conflito: \t"       +   missConflito      + "\t(" + arredondar2((float) missConflito/totalMisses)*100       + "%)" + 
+                     "\n    Miss de capacidade: \t"     +   missCapacidade    + "\t(" + arredondar2((float) missCapacidade/totalMisses)*100     + "%)\n" ;
         }
         return saida;
     }
