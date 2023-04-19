@@ -20,15 +20,19 @@ public class cache_simulator {
         
         frameCache frame = new frameCache(); //interface gráfica
         
-        if (args.length != 6) {
-            nsets = 2;    //número de conjuntos na cache
-            bsize = 1;      //tamanho do bloco
-            assoc = 8;      //grau de associatividade
-            subst = "l";    //política de substituição
-            flagOut = 0;
-            arquivoEntrada = "..\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\bin_100.bin";
+        if (args.length != 6) { //atribuindo manualmente no código os valores
+            nsets = 2;          //número de conjuntos na cache
+            bsize = 1;          //tamanho do bloco
+            assoc = 8;          //grau de associatividade
+            subst = "l";        //política de substituição
+            flagOut = 0;        //flag = 0 (interface gráfica)
+                                //flag = 1 (modo padrão de saída de dados - linha de comando)
             
-        } else {
+            arquivoEntrada = "..\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\bin_100.bin"; 
+            //arquivoEntrada = "..\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\bin_10000.bin"; 
+            //arquivoEntrada = "..\\Cache_Simulator\\src\\cache_simulator\\Enderecos\\vortex.in.sem.persons.bin"; 
+        
+        } else {                //pegando valores da linha de comando
             nsets = Integer.parseInt(args[0]);
             bsize = Integer.parseInt(args[1]);
             assoc = Integer.parseInt(args[2]);
@@ -37,10 +41,10 @@ public class cache_simulator {
             arquivoEntrada = args[5];
         }
         
-        if (flagOut == 1){  //execução pelo terminal
+        if (flagOut == 1){      //execução pelo terminal
             System.out.println( execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada));
             System.exit(0);
-        } else{ //execução pela interface gráfica
+        } else {             //execução pela interface gráfica
             frame.inicializaComponentes(nsets, bsize, assoc, subst, flagOut, arquivoEntrada);
             frame.atualizaLog(execucao(nsets, bsize, assoc, subst, flagOut, arquivoEntrada));
             frame.setVisible(true);
@@ -63,7 +67,6 @@ public class cache_simulator {
                 FileInputStream arquivoLeitura = new FileInputStream(arquivo);
                 byte[] b = new byte[4];                                     //vetor que irá armazenar 4 bytes
                 while (arquivoLeitura.read(b) != -1) {                      //lê de 4 em 4 bytes o arquivo
-                    //System.out.println(ByteBuffer.wrap(b).getInt()+" ");
                     cache1.alocaEnderecoCache(ByteBuffer.wrap(b).getInt()); //manda o número inteiro correspondente ao 4 bytes
                 }
                 arquivoLeitura.close();

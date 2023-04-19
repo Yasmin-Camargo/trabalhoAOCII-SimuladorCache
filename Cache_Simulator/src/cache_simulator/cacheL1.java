@@ -19,7 +19,8 @@ public class cacheL1 {
     private int hit, acessos, blocosVazios;
     private int [][]cache_val, cache_tag;
     private Queue<Integer>[] fila;      //fila para politica de substituição FIFO e LRU
-                                        //OBS.: A cache é endereçada à bytes e o endereço possui 32 bits por padrão
+    
+    //OBS.: A cache é endereçada à bytes e o endereço possui 32 bits por padrão
     
     //Construtor
     public cacheL1(int nsets, int bsize, int assoc, String subst, int flagOut) {
@@ -41,7 +42,7 @@ public class cacheL1 {
         cache_val = new int[nsets][assoc];       //matriz que armazena o bit de validade
         cache_tag = new int[nsets][assoc];       //matriz que armazena a tag
         
-        if(subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0){
+        if(subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0){     //cada conjunto vai possuir uma fila
             fila = new Queue[nsets];
             for (int i = 0; i < nsets; i++) {
                 fila[i] = new LinkedList<>();
@@ -55,9 +56,6 @@ public class cacheL1 {
         acessos++;
         int tag = endereco >> (n_bits_offset + n_bits_indice);                               // bits que representam a tag 
         int indice = (endereco >> n_bits_offset) & ((int) Math.pow(2, n_bits_indice) - 1);   // bits que representam o índice  
-        
-        //System.out.println("binario: "+endereco+" \ttag:"+tag + "\tindice" + indice);
-        
         int posicaoLivre = -1, bitControle = -1;    // 1 -> endereço está na cache
                                                     // 2 -> endereco não está na cache, mas tem linhas vagas
                                                     // 3 -> endereco não está na cache, mas não tem espaço vazio
@@ -69,7 +67,7 @@ public class cacheL1 {
             } else if (cache_tag[indice][i] == tag && cache_val[indice][i] != 0 ){          //caso o endereço requisitado esteja na cache   
                 hit++;
                 bitControle = 1;
-                atualizaAcesso(indice, i);
+                atualizaAcesso(indice, i);          // atualiza ordem de prioridade da fila
                 break;
             } 
         }
@@ -91,8 +89,8 @@ public class cacheL1 {
             if (assoc == 1) {                               //mapeamento direto
                 cache_tag[indice][0] = tag;
                 cache_val[indice][0] = 1;
-            } else {                                        //mapeamento conjunto associativo ou totalmente direto
-                int id = politicaSubstituicao(indice, tag);
+            } else {                                        //mapeamento conjunto associativo ou totalmente associativo
+                int id = politicaSubstituicao(indice);      //determina qual dado sai da cache
                 cache_tag[indice][id] = tag;
                 cache_val[indice][id] = 1;
             }
@@ -112,9 +110,9 @@ public class cacheL1 {
     }
     
     //determina qual dado sairá da cache (de acordo com a politica de substitução)
-    private int politicaSubstituicao(int indice, int tag){
+    private int politicaSubstituicao(int indice){
         if (subst.compareToIgnoreCase("f") == 0 || subst.compareToIgnoreCase("l") == 0) { //fifo ou lru
-            int linhaRemovida = (int) fila[indice].remove();    //indice do dado que está a mais tempo na cachce 
+            int linhaRemovida = (int) fila[indice].remove();    //indice do dado que está a mais tempo na cacche 
             fila[indice].add(linhaRemovida);
             return linhaRemovida;
         } else if(subst.equals("R") || subst.equals("r")){      //ramdom
@@ -144,11 +142,11 @@ public class cacheL1 {
         }
     }
     
-    private static double arredondar(double num) {
+    private static double arredondar(double num) {         //Arredonda para 4 casas decimais
         return Math.round(num * 10000.0)/10000.0;
     }
     
-    private static double arredondar2(double num) {
+    private static double arredondar2(double num) {        //Arredonda para 2 casas decimais
         return Math.round(num * 100.0)/100.0;
     }
    
